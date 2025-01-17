@@ -1,0 +1,310 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+:root {
+    --blanco: #fff;
+    --gris: #CDD5E0;
+    --verde: #00a149;
+    --orange: #e27c7c62;
+    --azul: #031cff;
+    --rojo: #ff0101;
+}
+
+*{
+    box-sizing: border-box;
+}
+
+body,
+html {
+    margin: 0;
+    padding: 0;
+    font-family: "Montserrat", serif;
+    text-decoration: none;
+}
+
+/*Globales*/
+.verde{
+    background-color: var(--verde);
+    border-color: var(--verde);
+    color: var(--blanco);
+    font-size: 14px;
+}
+
+.azul{
+    background-color: var(--azul);
+    border-color: var(--azul);
+    color: var(--blanco);
+    font-size: 14px;
+}
+
+.rojo{
+    background-color: var(--rojo);
+    border-color: var(--rojo);
+    color: var(--blanco);
+    font-size: 14px;
+}
+
+.btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 3px rgba(245, 244, 244, 0.2);
+}
+
+.ocultar {
+    display: none;
+}
+
+
+/*para quitar el spin button*/
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+/*Datos*/
+.contenedor-datos {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.contenedor-inputs {
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+}
+
+.contenedor-btns{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+}
+
+.contenido-btns{
+    width: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-wrap: wrap; 
+}
+
+#options{
+    display: none;
+}
+
+#contenedor-salvar{
+    display: flex;
+}
+
+label {
+    font-size: 14px;
+    cursor: pointer;
+}
+
+input {
+    border: none;
+    border-bottom: solid 1px var(--gris);
+    outline: none;
+    padding: 5px;
+    font-size: 12px;
+}
+
+.btn {
+    width: 100;
+    padding: 10px;
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+    margin-bottom: 5px;   
+    transition: transform 0.1s ease, box-shadow 0.1 ease; 
+}
+
+#pdf-preview {
+    position: absolute;
+    width: 100%;
+    z-index: 2;
+    top: 0;
+}
+
+.toolBar {
+    width: 100%;
+    height: 30px;
+    background-color: var(--azul);
+    display: flex;
+}
+
+.cerrar {
+    color: #fff;
+    font-weight: bold;
+    position: absolute;
+    right: 0;
+    padding: 5px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+
+.contenedor-presupuesto {
+    width: 100%;
+    display: flex;
+    
+}
+
+.contenido-presupuesto {
+    width: 100%;
+}
+
+ul{
+    margin: 0;
+}
+
+.lista-presupuesto {
+    list-style: none;
+    width: 95%;
+    
+}
+
+.contenido-sub{
+    width: 100%;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.contenido-sub span{
+    font-size: 12px;
+}
+
+.contenido-sub .description-sub{
+    width: 45%;
+}
+
+li{
+    font-size:  12px;
+    /* make the list items unselectable */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    position: relative;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    padding-left: 0;
+    margin-left: 0;
+}
+
+li .cant{
+    width: 35.72px;
+    text-align: center;
+}
+
+li .precios{
+    width: 56px;
+}
+
+li .description{
+    width: 45%;
+    text-align: left;
+}
+
+li span{
+    width: 13.75%;
+    font-size: 12px;
+}
+
+.remover{
+    text-align: center;
+    width: 63px;
+}
+
+ul li:nth-child(odd) {
+    background: var(--gris)
+}
+
+.close{
+    color: var(--rojo);
+    font-weight: bold;
+    font-size: 16px;
+    text-align: center;
+    cursor: pointer;
+    width: 63px;
+}
+
+.contenedor-totales{
+    width: 100%;
+    display: flex;
+    justify-content: right;
+}
+
+.contenido-totales{
+    width: 250px;
+    display: grid;
+    column-gap: 10px;
+    grid-template-columns: 100px 100px;
+    padding: 10px;
+    margin-right: 30px;
+}
+
+.montos{
+    font-size: 12px;
+    text-align: right;
+    width: 80px;
+}
+
+/*Querys*/
+@media (min-width: 640px) {
+
+    .titulo{
+        width: 100%;
+        text-align: center;
+    }
+    .contenedor-datos{
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-around;
+    }
+
+    li{
+        width: 100%;
+    }
+
+    .contenido-totales{
+        margin-right: 100px;
+    }
+}
+
+@media (min-width: 1000px) {
+    .contenido-totales{
+        margin-right: 200px;
+    }
+
+    .contenido-sub span{
+        font-size: 14px;
+    }
+
+    li span{
+        font-size: 14px;
+    }
+
+    .montos{
+        width: 100px;
+    }
+
+    #options{
+        display: flex;
+    }
+    
+    #contenedor-salvar{
+        display: none;
+    }
+
+}
+

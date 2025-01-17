@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Presupuesto</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+
+<body>
+  <section class="contenedor-datos">
+    <h1 class="titulo">Presupuesto</h1>
+    <div class="contenedor-inputs">
+      <label for="srs">SEÑORES:</label>
+      <input type="text" id="srs" name="srs">
+    </div>
+    <div class="contenedor-inputs">
+      <label for="nombreDif">Nombre del Difunto:</label>
+      <input type="text" id="nombreDif" name="nombreDif" maxlength="22">
+    </div>
+    <div class="contenedor-inputs">
+      <label for="titular">Titular o Familiar:</label>
+      <input type="text" id="titular" name="titular" maxlength="22">
+    </div>
+    <div class="contenedor-inputs">
+      <label for="telefono">Telefono:</label>
+      <input type="tel" id="telefono" name="telefono" maxlength="11">
+    </div>
+
+    <div class="contenedor-inputs">
+      <label for="description">Descripción:</label>
+      <input type="text" id="description" name="description" maxlength="40">
+    </div>
+
+    <div class="contenedor-inputs">
+      <label for="cant">Cant:</label>
+      <input type="number" id="cant" name="cant" maxlength="3">
+    </div>
+
+    <div class="contenedor-inputs">
+      <label for="precio">Precio unitario:</label>
+      <input type="number" id="precio" name="precio">
+    </div>
+
+    <div class="contenedor-inputs">
+      <label for="dolar">Tasa de cambio Dolar:</label>
+      <input type="number" id="dolar" name="dolar">
+    </div>
+
+    <div class="contenedor-btns">
+      <div class="contenido-btns">
+        <button class="btn verde" onclick="newItem()">Agregar</button>
+        <button id="monto" class="btn azul" onclick="operadorTernario();">Monto sin IVA</button>
+        <div id="options">
+          <button id="previewPDF" class="btn azul">Vista Previa del Presupuesto</button>
+        </div>
+        <div id="contenedor-salvar" class="">
+          <button id="salvarPDF" class="btn azul" onclick="guardarPdf()">Salvar Presupuesto</button>
+        </div>
+      </div>
+    </div>
+  </section>
+  <hr>
+
+  <section class="contenedor-presupuesto">
+    <div class="contenido-presupuesto">
+      <ul class="lista-presupuesto">
+        <div class="contenido-sub">
+          <span class="">CANT.</span>
+          <span class="description-sub">DESCRIPCIÓN</span>
+          <span class="montos">PRECIO UNIT.</span>
+          <span class="montos">TOTAL</span>
+          <span class="remover">REMOVER</span>
+        </div>
+      </ul>
+
+      <section class="contenedor-totales">
+        <div class="contenido-totales">
+          <span>SUB-TOTAL:</span>
+          <span id="sub-total" class="montos">0.00</span>
+          <span>IVA 16%</span>
+          <input id="iva" class="montos" type="text" placeholder="0.00" onkeyup="editarIva()">
+          <span>TOTAL:</span>
+          <span id="suma-total" class="montos">0.00</span>
+        </div>
+      </section>
+    </div>
+
+  </section>
+
+  <div id="pdf-preview"></div>
+  <script src="app.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+</body>
+
+</html>
