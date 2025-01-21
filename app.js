@@ -11,6 +11,7 @@ const btnVistaPrevia = document.getElementById("previewPDF");
 
 const tasaIvaSinIva = 1 + (16 / 100);
 const tasaMasIva = 1 * (16 / 100);
+
 dayName = new Array("Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sábado");
 monName = new Array("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre");
 now = new Date;
@@ -18,10 +19,10 @@ const fecha = (dayName[now.getDay()] + ", " + now.getDate() + " de " + monName[n
 
 //funciones
 function editarIva() {
-  const valor1 = subTotal.textContent.replace(/\./g, '').replace(',', '.');
-  const valor2 = iva.value.replace(/\./g, '').replace(',', '.');
-  const tot = parseFloat(valor1) + parseFloat(valor2);
-  totalPresupuest.innerText = formato(tot); 
+  const valor1 = subTotal.textContent;
+  const valor2 = iva.value;
+  const tot = valor1 + valor2;
+  totalPresupuest.innerText = tot;
 }
 
 function operadorTernario() {
@@ -36,46 +37,11 @@ function operadorTernario() {
   }
 }
 
-function montoSinIva() {
-  const precioUnit = document.querySelectorAll("span.precios");
-  const totalElementos = document.querySelectorAll("span.totales");
-
-  precioUnit.forEach(span => {
-    const value = span.textContent.replace(/\./g, '').replace(',', '.');
-    const valorLimpio = parseFloat(value);
-    const ivaElemento = parseFloat(valorLimpio) * tasaIvaSinIva;
-    const valorSinIva = ivaElemento;
-    const valorSinIvaDosDecimales = valorSinIva.toFixed(2);
-    const covertirNumero = parseFloat(valorSinIvaDosDecimales.replace(',', '.'));
-
-    span.textContent = formato(covertirNumero);
-  });
-
-  totalElementos.forEach(span => {
-    const value = span.textContent.replace(/\./g, '').replace(',', '.');
-    const valorLimpio = parseFloat(value);
-    const ivaElemento = valorLimpio * tasaIvaSinIva;
-    const valorSinIva = ivaElemento;
-    span.textContent = formato(valorSinIva);
-  });
-  const acumulador = sumarTotal();
-  calcularIva(acumulador);
-  subTotal.textContent = formato(acumulador);
-
-}
-/*
-function verficarLista() {
-  const verficarLi = ul.querySelectorAll("li");
-  if (verficarLi.length > 0) {
-    sectionBtn.classList.remove("ocultar");
-  } else {
-    sectionBtn.classList.add("ocultar");
-  }
-}*/
-
 function sumaValores(subTotal, iva) {
-  const totalTodo = subTotal + iva;
-  totalPresupuest.textContent = formato(totalTodo);
+  const totalTodo = Number(subTotal) + Number(iva);
+
+  totalPresupuest.textContent = totalTodo.toFixed(2);
+
   return totalTodo;
 }
 
@@ -93,13 +59,14 @@ function alterarColor() {
 function sumarTotal() {
   const totalElementos = document.querySelectorAll("span.totales");
   const sum = Array.from(totalElementos).reduce((acc, span) => {
-    const valor = span.textContent.replace(/\./g, '').replace(',', '.');
+    const valor = Number(span.textContent);
 
-    let lol = acc + parseFloat(valor) || 0;
+    let lol = acc + valor;
     return lol;
   }, 0);
 
-  subTotal.innerText = sum.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+  const subTotalTela = Math.floor(sum * 100) / 100;
+  subTotal.innerText = Number(subTotalTela).toFixed(2);
   return sum;
 }
 
@@ -113,50 +80,110 @@ function formato(numero) {
 
 function eliminarServicio(e) {
   e.target.offsetParent.remove();
-  alterarColor();
   const subTotal = sumarTotal();
   calcularIva(subTotal);
-  verficarLista();
+  //verficarLista();
+  alterarColor();
 }
 
-function calcularIva(total) {
-  const ivaCalculado = total * tasaMasIva;
-  
+function sumarIva(total) {
+  const ivaCalculado = Number(total) * tasaMasIva;
+
   sumaValores(total, ivaCalculado);
-  iva.value = formato(ivaCalculado);
-  return ivaCalculado;
+  iva.value = ivaCalculado.toFixed(2);
 }
 
+function calcularIva(subTotalNuevo, subTotalAntes) {
+  const ivaCalculado = Number(subTotalNuevo) * tasaMasIva;
+  const subTotalAntesNumero = Number(subTotalAntes);
+  const suma = ivaCalculado + subTotalNuevo;
+
+  if (suma > subTotalAntesNumero) {
+    resultado = Math.floor(ivaCalculado * 100) / 100;
+  } else {
+    resultado = Math.ceil(ivaCalculado * 100) / 100;
+  }
+  totalPresupuest.textContent = (subTotalNuevo + resultado).toFixed(2);
+  iva.value = resultado;
+  return resultado;
+}
+
+//sumar iva al valor actual
+function montoSinIva() {
+  const precioUnit = document.querySelectorAll("span.precios");
+  const totalElementos = document.querySelectorAll("span.totales");
+
+  precioUnit.forEach(span => {
+    const value = span.textContent;
+    const ivaElemento = value * tasaIvaSinIva;
+    let parteDecimal = Math.floor((ivaElemento * 100) % 100);
+    if (parteDecimal >= 50) {
+      span.textContent = Math.ceil(ivaElemento * 100) / 100;
+    } else {
+      span.textContent = Math.floor(ivaElemento * 100) / 100;
+    }
+
+  });
+
+  totalElementos.forEach(span => {
+    const value = span.textContent;
+    const ivaElemento = value * tasaIvaSinIva;
+
+    let parteDecimal = Math.floor((ivaElemento * 100) % 100);
+    if (parteDecimal >= 50) {
+      span.textContent = Math.ceil(ivaElemento * 100) / 100;
+    } else {
+      span.textContent = Math.floor(ivaElemento * 100) / 100;
+    }
+  });
+  const subTotalAntes = subTotal.textContent;
+  const sumaSubTotal = sumarTotal();
+  subTotal.textContent = Math.floor(sumaSubTotal * 100) / 100;
+  calcularIva(sumaSubTotal, subTotalAntes);
+
+}
+
+//para restar el iva al valor actual
 function montoComIva() {
   const precioUnit = document.querySelectorAll("span.precios");
   const totalElementos = document.querySelectorAll("span.totales");
   precioUnit.forEach(span => {
-    const value = span.textContent.replace(/\./g, '').replace(',', '.');
-    const valorLimpio = value;
-    const ivaElemento = parseFloat(valorLimpio) / tasaIvaSinIva;
-    let valorSinIva = ivaElemento.toFixed(2);
-    valorSinIva = parseFloat(valorSinIva);
-    const valorSinIvaDosDecimales = valorSinIva;
-
-    span.textContent = formato(valorSinIvaDosDecimales);
+    const value = Number(span.textContent);
+    const ivaElemento = value / tasaIvaSinIva;
+    const valorSinIvaDosDecimales = ivaElemento;
+    span.textContent = valorSinIvaDosDecimales.toFixed(2);
   });
 
   totalElementos.forEach(span => {
-    const value = span.textContent.replace(/\./g, '').replace('.', ',');
-    const valorLimpio = parseFloat(value);
-    const ivaElemento = valorLimpio / tasaIvaSinIva;
-    let valorSinIva = ivaElemento;
-    span.textContent = formato(valorSinIva);
+    const value = Number(span.textContent);
+    const ivaElemento = value / tasaIvaSinIva;
+    span.textContent = ivaElemento.toFixed(2);
   });
-  const acumulador = sumarTotal();
-  subTotal.textContent = formato(acumulador);
-  calcularIva(acumulador);
+
+  const subTotalAntes = Number(subTotal.textContent);
+  const sumaSubTotal = sumarTotal();
+  subTotal.textContent = Math.floor(sumaSubTotal * 100) / 100;
+  const corregirIva = calcularIva(sumaSubTotal, subTotalAntes);
+
+  let corregirvalor = Number(totalPresupuest.textContent);
+  const diferecia = (corregirvalor - subTotalAntes).toFixed(2);
+  const nuevoIva = (corregirIva - diferecia);
+  if (subTotalAntes < corregirvalor) {
+
+    corregirvalor = corregirvalor - diferecia;
+    iva.value = nuevoIva.toFixed(2);
+    totalPresupuest.textContent = corregirvalor;
+  } else if (subTotalAntes > corregirvalor) {
+    corregirvalor = corregirvalor + diferecia;
+    iva.value = nuevoIva.toFixed(2);
+    totalPresupuest.textContent = corregirvalor;
+  }
 }
 
 function newItem() {
   let cantInput = document.getElementById("cant").value;
   const cantSpan = document.createElement("span");
-  let descriptionInput = document.getElementById("description").value;
+  let descriptionInput = document.getElementById("description");
   const descriptionSpan = document.createElement("span");
   let precioUnit = document.getElementById("precio").value;
   const precioSpan = document.createElement("span");
@@ -176,12 +203,12 @@ function newItem() {
     descriptionSpan.className = "description";
     spanRemover.className = "close";
     cantSpan.innerText = cantInput;
-    descriptionSpan.innerText = descriptionInput;
+    descriptionSpan.innerText = descriptionInput.value;
     const varPrecio = precioUnit * dolar;
-    precioSpan.innerText = varPrecio.toLocaleString('es-VE', { minimumFractionDigits: 2 });
+    precioSpan.innerText = varPrecio.toFixed(2);
 
     const tot = (precioUnit * dolar) * cantInput;
-    totalSpan.innerText = tot.toLocaleString('es-VE', { minimumFractionDigits: 2 });
+    totalSpan.innerText = tot.toFixed(2);
 
     spanRemover.appendChild(txt);
     li.appendChild(cantSpan);
@@ -193,12 +220,14 @@ function newItem() {
     ul.appendChild(li);
     //verficarLista();
     const sumaTotal = sumarTotal();
-    calcularIva(sumaTotal);
+    //calcularIva(sumaTotal);
+    sumarIva(sumaTotal);
+    descriptionInput.value = "";
   }
-
+  
 }
 
-function guardarPdf(){
+function guardarPdf() {
   //variables
   const senhores = document.getElementById("srs");
   const nombreDif = document.getElementById("nombreDif");
@@ -215,7 +244,7 @@ function guardarPdf(){
   let texto = "PRESUPUESTO";
   let anchoTexto = doc.getTextWidth(texto);
   let centro = (tamanhoX - anchoTexto) / 2;
-  
+
   // Agregar contenido al PDF
   //agrego el logo
   doc.addImage(imgData, "JPEG", 10, 10, 50, 35);
@@ -325,19 +354,19 @@ function guardarPdf(){
 
   texto = "_____________________"
   anchoTexto = doc.getTextWidth(texto);
-  y +=15;
+  y += 15;
   centro = (tamanhoX - anchoTexto) / 2;
   doc.text(texto, centro, y);
 
   texto = "CARLOS CEBALLOS"
   anchoTexto = doc.getTextWidth(texto);
-  y +=8;
+  y += 8;
   centro = (tamanhoX - anchoTexto) / 2;
   doc.text(texto, centro, y);
 
   texto = "GERENTE"
   anchoTexto = doc.getTextWidth(texto);
-  y +=8;
+  y += 8;
   centro = (tamanhoX - anchoTexto) / 2;
   doc.text(texto, centro, y);
 
@@ -361,7 +390,7 @@ async function previewPDF() {
   let texto = "PRESUPUESTO";
   let anchoTexto = doc.getTextWidth(texto);
   let centro = (tamanhoX - anchoTexto) / 2;
-  
+
   // Agregar contenido al PDF
   //agrego el logo
   doc.addImage(imgData, "JPEG", 10, 10, 50, 35);
@@ -426,16 +455,19 @@ async function previewPDF() {
       doc.setFontSize(10);
       // Escribir los valores de los spans en el PDF, alineados horizontalmente
       doc.rect(9, y - 6, 15, 8, 'S');
+
       doc.text(cant, 10, y);
 
       doc.rect(24, y - 6, 100, 8, 'S');
       doc.text(description, 25, y);
 
       doc.rect(124, y - 6, 30, 8, 'S');
-      doc.text(precio, x - 40, y, { align: 'right' });
+      const precioFormatado = formato(Number(precio));
+      doc.text(precioFormatado, x - 40, y, { align: 'right' });
 
       doc.rect(154, y - 6, 35, 8, 'S');
-      doc.text(total, x - 5, y, { align: 'right' });
+      const totalFormatado = formato(Number(total));
+      doc.text(totalFormatado, x - 5, y, { align: 'right' });
 
       // Incrementar la posición Y para la siguiente fila
       y += 8;
@@ -447,19 +479,23 @@ async function previewPDF() {
   doc.rect(124, y - 6, 30, 8, 'S');
   doc.text("SUB-TOTAL:", x - 40, y, { align: 'right' });
   doc.rect(154, y - 6, 35, 8, 'S');
-  doc.text(subTotal.textContent, x - 5, y, { align: 'right' });
+  const subTotalFormatado = formato(Number(subTotal.textContent));
+  console.log(subTotalFormatado);
+  doc.text(subTotalFormatado, x - 5, y, { align: 'right' });
 
   y += 8;
   doc.rect(124, y - 6, 30, 8, 'S');
   doc.text("IVA 16,5%:", x - 40, y, { align: 'right' });
   doc.rect(154, y - 6, 35, 8, 'S');
-  doc.text(iva.value, x - 5, y, { align: 'right' });
+  const ivaFormatado = formato(Number(iva.value));
+  doc.text(ivaFormatado, x - 5, y, { align: 'right' });
 
   y += 8;
   doc.rect(124, y - 6, 30, 8, 'S');
   doc.text("TOTAL:", x - 40, y, { align: 'right' });
   doc.rect(154, y - 6, 35, 8, 'S');
-  doc.text(totalPresupuest.textContent, x - 5, y, { align: 'right' });
+  const totalPresupuestFormatado = formato(Number(totalPresupuest.textContent));
+  doc.text(totalPresupuestFormatado, x - 5, y, { align: 'right' });
 
   //tamanhoX
   texto = "POR LA EMPRESA";
@@ -471,19 +507,19 @@ async function previewPDF() {
 
   texto = "_____________________"
   anchoTexto = doc.getTextWidth(texto);
-  y +=15;
+  y += 15;
   centro = (tamanhoX - anchoTexto) / 2;
   doc.text(texto, centro, y);
 
   texto = "CARLOS CEBALLOS";
   anchoTexto = doc.getTextWidth(texto);
-  y +=8;
+  y += 8;
   centro = (tamanhoX - anchoTexto) / 2;
   doc.text(texto, centro, y);
 
   texto = "GERENTE"
   anchoTexto = doc.getTextWidth(texto);
-  y +=8;
+  y += 8;
   centro = (tamanhoX - anchoTexto) / 2;
   doc.text(texto, centro, y);
 
