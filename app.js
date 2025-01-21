@@ -168,15 +168,14 @@ function montoComIva() {
   let corregirvalor = Number(totalPresupuest.textContent);
   const diferecia = (corregirvalor - subTotalAntes).toFixed(2);
   const nuevoIva = (corregirIva - diferecia);
+  
   if (subTotalAntes < corregirvalor) {
+    iva.value = nuevoIva.toFixed(2);
+    totalPresupuest.textContent = Number(iva.value) + Number(subTotal.textContent);
 
-    corregirvalor = corregirvalor - diferecia;
-    iva.value = nuevoIva.toFixed(2);
-    totalPresupuest.textContent = corregirvalor;
   } else if (subTotalAntes > corregirvalor) {
-    corregirvalor = corregirvalor + diferecia;
     iva.value = nuevoIva.toFixed(2);
-    totalPresupuest.textContent = corregirvalor;
+    totalPresupuest.textContent = Number(iva.value) + Number(subTotal.textContent);
   }
 }
 
@@ -306,7 +305,7 @@ function guardarPdf() {
       const precio = item.querySelector('.precios').textContent;
       const total = item.querySelector('.totales').textContent;
 
-      doc.setFontSize(10);
+      doc.setFontSize(9);
       // Escribir los valores de los spans en el PDF, alineados horizontalmente
       doc.rect(9, y - 6, 15, 8, 'S');
       doc.text(cant, 10, y);
@@ -452,7 +451,7 @@ async function previewPDF() {
       const precio = item.querySelector('.precios').textContent;
       const total = item.querySelector('.totales').textContent;
 
-      doc.setFontSize(10);
+      doc.setFontSize(9);
       // Escribir los valores de los spans en el PDF, alineados horizontalmente
       doc.rect(9, y - 6, 15, 8, 'S');
 
